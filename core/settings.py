@@ -196,12 +196,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_DIRS_PATH = os.path.join(BASE_DIR, 'static')
+if os.path.exists(STATIC_DIRS_PATH):
+    STATICFILES_DIRS = [STATIC_DIRS_PATH]
+else:
+    STATICFILES_DIRS = []
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
