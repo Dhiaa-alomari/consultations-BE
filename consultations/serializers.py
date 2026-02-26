@@ -80,10 +80,10 @@ class CreateAppointmentSerializer(serializers.ModelSerializer):
                 + timedelta(minutes=appt_duration)
             ).time()
 
-            if appt_end > WORKING_HOURS_END:
+            if appt_end >= WORKING_HOURS_END:
                 raise serializers.ValidationError(
                     f'The appointment would end at {appt_end.strftime("%I:%M %p")}, '
-                    f'which is after working hours (6:00 PM). '
+                    f'which is after or at closing time (6:00 PM). '
                     f'Please choose an earlier time or shorter duration.'
                 )
 
