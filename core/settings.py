@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'change-me-in-production')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1', '.herokuapp.com').split(',')
 
 # Application definition
 
@@ -106,7 +106,7 @@ DATABASES = {
 if os.getenv('DATABASE_URL'):
     DATABASES['default'] = dj_database_url.config(
         conn_max_age=600, 
-        ssl_require=True
+        ssl_require=False
     )
 
 # Password validation
