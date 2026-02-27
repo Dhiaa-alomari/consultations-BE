@@ -65,6 +65,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'core.urls'
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ('css',) #avoid compressing CSS files (can cause issues with Heroku's static file handling)
 
 TEMPLATES = [
     {
