@@ -13,6 +13,8 @@ from .serializers  import (
     ChangePasswordSerializer,
 )
 
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 # ─── Register ──────────────────────────────────────────────────────────#
 
@@ -44,6 +46,7 @@ class LoginView(APIView):
     """POST /api/auth/login/"""
     permission_classes = [AllowAny]
 
+    @method_decorator(csrf_exempt, name='dispatch')
     def post(self, request):
         from django.contrib.auth import authenticate
         username = request.data.get('username', '').strip()
