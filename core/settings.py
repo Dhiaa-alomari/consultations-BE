@@ -190,7 +190,7 @@ SIMPLE_JWT = {
 # ─── CORS ────────────────────────────────────────────────────────────────────
 CORS_ALLOWED_ORIGINS = os.getenv(
     'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://127.0.0.1:5500,http://127.0.0.1:5501'
+    'http://localhost:3000,http://127.0.0.1:5500,http://127.0.0.1:5501,https://dhiaa-alomari.github.io/consultations-FE'
 ).split(',')
 
 # In development only:
