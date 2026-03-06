@@ -1,6 +1,6 @@
 from django.db   import models
 from django.conf import settings
-from decimal     import Decimal
+from decimal     import ROUND_HALF_UP, Decimal
 
 
 class Cart(models.Model):
@@ -52,6 +52,10 @@ class CartItem(models.Model):
         supply or manipulate this value.
         """
         return (Decimal(self.category.price_per_15min) / Decimal(15)) * Decimal(self.duration)
+
+    def computed_price(self):
+        price = (Decimal(self.category.price_per_15min) / Decimal(15)) * Decimal(self.duration)
+        return price.quantize(Decimal("0.00"), rounding=ROUND_HALF_UP)
 
     def __str__(self):
         return (
