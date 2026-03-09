@@ -85,36 +85,43 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# Content Security Policy (CSP) for Stripe
-
+# ─── Content Security Policy (CSP) to avoid blob issues with Stripe and Web Workers
 CSP_DEFAULT_SRC = ("'self'",)
+
 CSP_SCRIPT_SRC = (
     "'self'",
     "'unsafe-inline'",
     "'unsafe-eval'",
     "https://js.stripe.com",
     "https://m.stripe.network",
+    "blob:",
 )
-CSP_FRAME_SRC = (
-    "'self'",
-    "https://js.stripe.com",
-    "https://hooks.stripe.com",
-)
-CSP_CONNECT_SRC = (
-    "'self'",
-    "https://api.stripe.com",
-    "https://m.stripe.network",
-)
-CSP_IMG_SRC = (
-    "'self'",
-    "data:",
-    "https:",
-)
+
 CSP_WORKER_SRC = (
     "'self'",
     "blob:",
     "https://m.stripe.network",
 )
+
+CSP_FRAME_SRC = (
+    "'self'",
+    "https://js.stripe.com",
+    "https://hooks.stripe.com",
+)
+
+CSP_CONNECT_SRC = (
+    "'self'",
+    "https://api.stripe.com",
+    "https://m.stripe.network",
+    "https://consultations-be-795aeca2a205.herokuapp.com",
+)
+
+CSP_IMG_SRC = (
+    "'self'",
+    "data:",
+    "https:",
+)
+
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
