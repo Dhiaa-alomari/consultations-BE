@@ -100,10 +100,6 @@ DATABASES = {
 }
 
 # Heroku postgres override (when DATABASE_URL is set by Heroku)
-# db_from_env = dj_database_url.config(conn_max_age=500)
-# if db_from_env:
-#     DATABASES['default'].update(db_from_env)
-    
 if os.getenv('DATABASE_URL'):
     DATABASES['default'] = dj_database_url.config(
         conn_max_age=600, 
