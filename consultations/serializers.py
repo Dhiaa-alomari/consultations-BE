@@ -1,29 +1,32 @@
 from rest_framework import serializers
-from django.utils   import timezone
-from datetime       import time as dt_time
-from .models        import ConsultationCategory, Appointment
+from django.utils import timezone
+from datetime import time as dt_time
+from .models import ConsultationCategory, Appointment
 
-# ─── Working Hours ────────────────────────────────────────────────────────────
+# ─── Working Hours ───────────────────────────────────────────────────────────
 WORKING_HOURS_START = dt_time(9, 0)   # 09:00 AM
-WORKING_HOURS_END   = dt_time(18, 0)  # 06:00 PM
+WORKING_HOURS_END = dt_time(18, 0)  # 06:00 PM
 
 
 class ConsultationCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model  = ConsultationCategory
+        model = ConsultationCategory
         fields = ('id', 'category', 'price_per_15min', 'description')
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
     """Used for listing / reading appointments."""
-    category_name   = serializers.CharField(source='category.category', read_only=True)
+    category_name = serializers.CharField(source='category.category',
+                                          read_only=True)
     price_per_15min = serializers.DecimalField(
-        source='category.price_per_15min', max_digits=10, decimal_places=2, read_only=True
+        source='category.price_per_15min', max_digits=10, decimal_places=2,
+        read_only=True
     )
-    total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    total_price = serializers.DecimalField(max_digits=10, decimal_places=2,
+                                           read_only=True)
 
     class Meta:
-        model  = Appointment
+        model = Appointment
         fields = (
             'id', 'category', 'category_name', 'price_per_15min',
             'date', 'time', 'duration', 'total_price',
@@ -36,7 +39,7 @@ class CreateAppointmentSerializer(serializers.ModelSerializer):
     """Used for creating appointments (in cart flow)."""
 
     class Meta:
-        model  = Appointment
+        model = Appointment
         fields = ('category', 'date', 'time', 'duration')
 
     def validate_date(self, value):
@@ -69,8 +72,8 @@ class CreateAppointmentSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        # ── Check that appointment END time doesn't exceed working hours ──────
-        appt_time     = data.get('time')
+        # ── Check that appointment END time doesn't exceed working hours ─────
+        appt_time = data.get('time')
         appt_duration = data.get('duration')
 
         if appt_time and appt_duration:
@@ -82,12 +85,12 @@ class CreateAppointmentSerializer(serializers.ModelSerializer):
 
             if appt_end >= WORKING_HOURS_END:
                 raise serializers.ValidationError(
-                    f'The appointment would end at {appt_end.strftime("%I:%M %p")}, '
+                    f'Booking would end at {appt_end.strftime("%I:%M %p")}, '
                     f'which is after or at closing time (6:00 PM). '
                     f'Please choose an earlier time or shorter duration.'
                 )
 
-        # ── Check slot availability ───────────────────────────────────────────
+        # ── Check slot availability ──────────────────────────────────────────
         qs = Appointment.objects.filter(
             category=data['category'],
             date=data['date'],

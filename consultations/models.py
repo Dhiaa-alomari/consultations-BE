@@ -1,25 +1,26 @@
-from django.db   import models
+from django.db import models
 from django.conf import settings
-from decimal     import Decimal
+from decimal import Decimal
 
 
 class ConsultationCategory(models.Model):
     CATEGORY_CHOICES = [
-        ('Felonies',              'Felonies'),
-        ('Misdemeanors',          'Misdemeanors'),
-        ('Immigration',           'Immigration'),
-        ('Property Management',   'Property Management'),
-        ('Family Law',            'Family Law'),
-        ('Commercial Law',        'Commercial Law'),
-        ('Labor Law',             'Labor Law'),
-        ('Tax Consulting',        'Tax Consulting'),
-        ('Contracts',             'Contracts'),
+        ('Felonies', 'Felonies'),
+        ('Misdemeanors', 'Misdemeanors'),
+        ('Immigration', 'Immigration'),
+        ('Property Management', 'Property Management'),
+        ('Family Law', 'Family Law'),
+        ('Commercial Law', 'Commercial Law'),
+        ('Labor Law', 'Labor Law'),
+        ('Tax Consulting', 'Tax Consulting'),
+        ('Contracts', 'Contracts'),
         ('Intellectual Property', 'Intellectual Property'),
     ]
 
-    category         = models.CharField(max_length=60, choices=CATEGORY_CHOICES, unique=True)
-    price_per_15min  = models.DecimalField(max_digits=10, decimal_places=2)
-    description      = models.TextField(blank=True)
+    category = models.CharField(max_length=60, choices=CATEGORY_CHOICES,
+                                unique=True)
+    price_per_15min = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(blank=True)
 
     class Meta:
         verbose_name_plural = 'Consultation Categories'
@@ -47,27 +48,28 @@ class Appointment(models.Model):
         (120, '2 hours'),
     ]
 
-    user        = models.ForeignKey(
+    user = models.ForeignKey(
                       settings.AUTH_USER_MODEL,
                       on_delete=models.CASCADE,
                       related_name='appointments',
                   )
-    category    = models.ForeignKey(
+    category = models.ForeignKey(
                       ConsultationCategory,
                       on_delete=models.CASCADE,
                       related_name='appointments',
                   )
-    date        = models.DateField()
-    time        = models.TimeField()
-    duration    = models.IntegerField(choices=DURATION_CHOICES)
+    date = models.DateField()
+    time = models.TimeField()
+    duration = models.IntegerField(choices=DURATION_CHOICES)
 
     # Computed & stored server-side — never editable via API
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, editable=False, default=0)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2,
+                                      editable=False, default=0)
 
     # Set to True only after Stripe payment succeeds (webhook)
-    is_paid     = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
 
-    created_at  = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('category', 'date', 'time')
@@ -79,7 +81,8 @@ class Appointment(models.Model):
         Always computed from the DB-stored price_per_15min, never from
         user-supplied data.
         """
-        return (Decimal(self.category.price_per_15min) / Decimal(15)) * Decimal(self.duration)
+        return (Decimal(self.category.price_per_15min)
+                 / Decimal(15)) * Decimal(self.duration)
 
     def save(self, *args, **kwargs):
         # Recompute on every save — prevents any tampering

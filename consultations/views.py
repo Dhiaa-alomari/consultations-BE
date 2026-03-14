@@ -1,37 +1,37 @@
-from rest_framework              import generics, status
-from rest_framework.views        import APIView
-from rest_framework.response     import Response
-from rest_framework.permissions  import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework import generics, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
-from .models       import ConsultationCategory, Appointment
-from .serializers  import (
+from .models import ConsultationCategory, Appointment
+from .serializers import (
     ConsultationCategorySerializer,
     AppointmentSerializer,
     CreateAppointmentSerializer,
 )
 
 
-# ─── Categories (public) ──────────────────────────────────────────────────────
+# ─── Categories (public) ─────────────────────────────────────────────────────
 
 class CategoryListView(generics.ListAPIView):
     """GET /api/consultations/categories/  — Public"""
-    queryset           = ConsultationCategory.objects.all()
-    serializer_class   = ConsultationCategorySerializer
+    queryset = ConsultationCategory.objects.all()
+    serializer_class = ConsultationCategorySerializer
     permission_classes = [AllowAny]
 
 
 # Admin-only CRUD for categories
 class CategoryAdminCreateView(generics.CreateAPIView):
     """POST /api/consultations/categories/create/  — Admin only"""
-    queryset           = ConsultationCategory.objects.all()
-    serializer_class   = ConsultationCategorySerializer
+    queryset = ConsultationCategory.objects.all()
+    serializer_class = ConsultationCategorySerializer
     permission_classes = [IsAdminUser]
 
 
 class CategoryAdminDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """GET/PUT/PATCH/DELETE /api/consultations/categories/<pk>/  — Admin only"""
-    queryset           = ConsultationCategory.objects.all()
-    serializer_class   = ConsultationCategorySerializer
+    """GET/PUT/PATCH/DELETE /api/consultations/categories/<pk>/ — Admin only"""
+    queryset = ConsultationCategory.objects.all()
+    serializer_class = ConsultationCategorySerializer
     permission_classes = [IsAdminUser]
 
 
@@ -42,7 +42,7 @@ class AppointmentHistoryView(generics.ListAPIView):
     GET /api/consultations/my-appointments/
     Returns ONLY the authenticated user's appointments.
     """
-    serializer_class   = AppointmentSerializer
+    serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -61,7 +61,7 @@ class AppointmentCreateView(generics.CreateAPIView):
     Used internally by the Stripe webhook (and for testing via Postman).
     Requires authentication.
     """
-    serializer_class   = CreateAppointmentSerializer
+    serializer_class = CreateAppointmentSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -83,9 +83,10 @@ class AppointmentCreateView(generics.CreateAPIView):
 class AppointmentDetailView(generics.RetrieveDestroyAPIView):
     """
     GET    /api/consultations/appointments/<pk>/  — view single appointment
-    DELETE /api/consultations/appointments/<pk>/  — cancel appointment (owner only)
+    DELETE /api/consultations/appointments/<pk>/  — cancel appointment
+    (owner only)
     """
-    serializer_class   = AppointmentSerializer
+    serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -121,7 +122,7 @@ class SlotAvailabilityView(APIView):
 
     def get(self, request):
         category_id = request.query_params.get('category')
-        date        = request.query_params.get('date')
+        date = request.query_params.get('date')
 
         if not category_id or not date:
             return Response(

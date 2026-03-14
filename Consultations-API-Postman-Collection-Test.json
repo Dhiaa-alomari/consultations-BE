@@ -1,0 +1,1473 @@
+{
+  "info": {
+    "_postman_id": "6433209f-3912-4c5a-82bd-3bf0242cf2e5",
+    "name": "Legal Consultation API",
+    "description": "Complete API collection for Legal Consultation Booking System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52763002",
+    "_collection_link": "https://go.postman.co/collection/52763002-6433209f-3912-4c5a-82bd-3bf0242cf2e5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1 - Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.tokens) {",
+                  "  pm.collectionVariables.set('access_token', res.tokens.access);",
+                  "  pm.collectionVariables.set('refresh_token', res.tokens.refresh);",
+                  "  console.log('✅ Tokens saved automatically');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"MyPass123!\",\n  \"password_confirm\": \"MyPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register",
+                ""
+              ]
+            },
+            "description": "Register a new user. Tokens are saved automatically to collection variables."
+          },
+          "response": []
+        },
+        {
+          "name": "2 - Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.tokens) {",
+                  "  pm.collectionVariables.set('access_token', res.tokens.access);",
+                  "  pm.collectionVariables.set('refresh_token', res.tokens.refresh);",
+                  "  console.log('✅ Tokens saved automatically');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"MyPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            },
+            "description": "Login with username or email. Access & Refresh tokens saved automatically."
+          },
+          "response": []
+        },
+        {
+          "name": "2b - Login (by Email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"test@example.com\",\n  \"password\": \"MyPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            },
+            "description": "Login using email instead of username."
+          },
+          "response": []
+        },
+        {
+          "name": "3 - Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.access) {",
+                  "  pm.collectionVariables.set('access_token', res.access);",
+                  "  console.log('✅ Access token refreshed');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/refresh/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "token",
+                "refresh",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4 - Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "profile",
+                ""
+              ]
+            },
+            "description": "Get current user profile. Requires auth token."
+          },
+          "response": []
+        },
+        {
+          "name": "5 - Update Profile (JSON fields)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Ahmed\",\n  \"last_name\": \"Ali\",\n  \"phone\": \"+966501234567\",\n  \"bio\": \"Legal consultant enthusiast\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "profile",
+                ""
+              ]
+            },
+            "description": "Update text fields in profile."
+          },
+          "response": []
+        },
+        {
+          "name": "5b - Update Profile (with Avatar Image)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "first_name",
+                  "value": "Ahmed",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "+966501234567",
+                  "type": "text"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "value": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "profile",
+                ""
+              ]
+            },
+            "description": "Update profile with avatar image upload. Use form-data (not JSON)."
+          },
+          "response": []
+        },
+        {
+          "name": "6 - Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_password\": \"MyPass123!\",\n  \"new_password\": \"NewPass456!\",\n  \"confirm_password\": \"NewPass456!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/change-password/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "change-password",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7 - Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout",
+                ""
+              ]
+            },
+            "description": "Blacklists the refresh token. User must login again."
+          },
+          "response": []
+        },
+        {
+          "name": "8 - Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"MyPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/delete-account/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "delete-account",
+                ""
+              ]
+            },
+            "description": "Permanently deletes the account. Password confirmation required."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Consultations",
+      "item": [
+        {
+          "name": "1 - List All Categories (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/consultations/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "categories",
+                ""
+              ]
+            },
+            "description": "No auth required. Returns all consultation types with price_per_15min."
+          },
+          "response": []
+        },
+        {
+          "name": "2 - Check Slot Availability (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/consultations/availability/?category=1&date=2026-03-01",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "availability",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "1",
+                  "description": "Category ID"
+                },
+                {
+                  "key": "date",
+                  "value": "2026-03-01",
+                  "description": "Date YYYY-MM-DD"
+                }
+              ]
+            },
+            "description": "Returns list of booked times for a category on a given date."
+          },
+          "response": []
+        },
+        {
+          "name": "3 - My Appointment History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/consultations/my-appointments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "my-appointments",
+                ""
+              ]
+            },
+            "description": "Returns only the logged-in user's appointments."
+          },
+          "response": []
+        },
+        {
+          "name": "4 - [ADMIN] Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"Immigration\",\n  \"price_per_15min\": \"45.00\",\n  \"description\": \"Legal advice for immigration and visa matters\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/consultations/categories/create/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "categories",
+                "create",
+                ""
+              ]
+            },
+            "description": "Admin only. Creates a new consultation category."
+          },
+          "response": []
+        },
+        {
+          "name": "5 - [ADMIN] Update Category",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price_per_15min\": \"50.00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/consultations/categories/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "categories",
+                "1",
+                ""
+              ]
+            },
+            "description": "Admin only. Update category price or description. Change 1 to the category ID."
+          },
+          "response": []
+        },
+        {
+          "name": "6 - [ADMIN] Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/consultations/categories/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "categories",
+                "1",
+                ""
+              ]
+            },
+            "description": "Admin only. Change 1 to the category ID you want to delete."
+          },
+          "response": []
+        },
+        {
+          "name": "7 - Create Appointment (Direct)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.id) {",
+                  "  pm.collectionVariables.set('appointment_id', res.id);",
+                  "  console.log('✅ appointment_id saved: ' + res.id);",
+                  "  console.log('💰 total_price: ' + res.total_price);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 1,\n  \"date\": \"2026-04-10\",\n  \"time\": \"09:00:00\",\n  \"duration\": 60\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/consultations/appointments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "appointments",
+                ""
+              ]
+            },
+            "description": "Creates an appointment directly (for testing). In production the appointment is created automatically after Stripe payment succeeds via webhook.\n\nduration choices: 15, 30, 60, 120\nThe total_price is always computed server-side.\nAppointment ID is saved automatically to {{appointment_id}}."
+          },
+          "response": []
+        },
+        {
+          "name": "8 - Get Single Appointment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/consultations/appointments/{{appointment_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "appointments",
+                "{{appointment_id}}",
+                ""
+              ]
+            },
+            "description": "Retrieve details of a single appointment by ID.\nUses {{appointment_id}} saved automatically from request 7.\nUsers can only access their own appointments — trying another user's ID returns 404."
+          },
+          "response": []
+        },
+        {
+          "name": "9 - Delete (Cancel) Appointment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/consultations/appointments/{{appointment_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "appointments",
+                "{{appointment_id}}",
+                ""
+              ]
+            },
+            "description": "Cancel (delete) an appointment.\nOnly works if is_paid = false.\nIf the appointment is already paid → returns 400 with error message asking to contact support.\nUses {{appointment_id}} saved automatically from request 7."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "1 - View Cart",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/orders/cart/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "cart",
+                ""
+              ]
+            },
+            "description": "View current cart with all items and computed total."
+          },
+          "response": []
+        },
+        {
+          "name": "2 - Add Item to Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 1,\n  \"date\": \"2026-03-15\",\n  \"time\": \"10:00:00\",\n  \"duration\": 60\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/cart/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "cart",
+                ""
+              ]
+            },
+            "description": "Add consultation to cart. duration must be 15, 30, 60, or 120."
+          },
+          "response": []
+        },
+        {
+          "name": "3 - Add Another Item (Different Category)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 2,\n  \"date\": \"2026-03-15\",\n  \"time\": \"10:00:00\",\n  \"duration\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/cart/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "cart",
+                ""
+              ]
+            },
+            "description": "Same date & time but different category — this is ALLOWED."
+          },
+          "response": []
+        },
+        {
+          "name": "4 - Update Cart Item (Change Duration)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"duration\": 120\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/cart/items/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "cart",
+                "items",
+                "1",
+                ""
+              ]
+            },
+            "description": "Change duration of cart item. Replace 1 with the cart item ID."
+          },
+          "response": []
+        },
+        {
+          "name": "5 - Update Cart Item (Change Category Type)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/cart/items/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "cart",
+                "items",
+                "1",
+                ""
+              ]
+            },
+            "description": "Change consultation type (e.g. from Felonies to Immigration)."
+          },
+          "response": []
+        },
+        {
+          "name": "6 - Remove Item from Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/orders/cart/items/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "cart",
+                "items",
+                "1",
+                ""
+              ]
+            },
+            "description": "Remove a single item. Replace 1 with cart item ID."
+          },
+          "response": []
+        },
+        {
+          "name": "7 - Clear Entire Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/orders/cart/clear/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "cart",
+                "clear",
+                ""
+              ]
+            },
+            "description": "Remove ALL items from the cart at once."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Checkout & Orders",
+      "item": [
+        {
+          "name": "1 - Create Checkout Session (Stripe)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/checkout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "checkout",
+                ""
+              ]
+            },
+            "description": "Creates Stripe PaymentIntent. Returns client_secret for frontend payment form. Total computed server-side — cannot be tampered with."
+          },
+          "response": []
+        },
+        {
+          "name": "2 - My Orders List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/orders/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                ""
+              ]
+            },
+            "description": "Returns all orders for the logged-in user (newest first)."
+          },
+          "response": []
+        },
+        {
+          "name": "3 - Order Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/orders/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "1",
+                ""
+              ]
+            },
+            "description": "Get full details of a single order. Replace 1 with order ID."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "item": [
+        {
+          "name": "1 - Send Contact Message (Public)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ahmed Ali\",\n  \"email\": \"ahmed@example.com\",\n  \"subject\": \"general\",\n  \"message\": \"I need help booking a consultation for my case.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/contact/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "contact",
+                ""
+              ]
+            },
+            "description": "No auth required. subject choices: general, billing, technical, legal, complaint, other"
+          },
+          "response": []
+        },
+        {
+          "name": "2 - Send Message While Logged In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ahmed Ali\",\n  \"email\": \"ahmed@example.com\",\n  \"subject\": \"billing\",\n  \"message\": \"I have a question about my last payment.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/contact/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "contact",
+                ""
+              ]
+            },
+            "description": "When logged in, message is linked to the user account automatically."
+          },
+          "response": []
+        },
+        {
+          "name": "3 - [ADMIN] View All Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/contact/messages/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "contact",
+                "messages",
+                ""
+              ]
+            },
+            "description": "Admin only. View all contact messages."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Cases (Validation Tests)",
+      "item": [
+        {
+          "name": "Register - Passwords Don't Match",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"user2\",\n  \"email\": \"user2@example.com\",\n  \"password\": \"MyPass123!\",\n  \"password_confirm\": \"WrongPass!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register",
+                ""
+              ]
+            },
+            "description": "Expected: 400 - Passwords do not match"
+          },
+          "response": []
+        },
+        {
+          "name": "Register - Duplicate Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"user3\",\n  \"email\": \"test@example.com\",\n  \"password\": \"MyPass123!\",\n  \"password_confirm\": \"MyPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register",
+                ""
+              ]
+            },
+            "description": "Expected: 400 - Email already registered"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Wrong Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"WrongPassword!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            },
+            "description": "Expected: 401 - Invalid credentials"
+          },
+          "response": []
+        },
+        {
+          "name": "Cart - Past Date",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 1,\n  \"date\": \"2020-01-01\",\n  \"time\": \"10:00:00\",\n  \"duration\": 60\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/cart/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "cart",
+                ""
+              ]
+            },
+            "description": "Expected: 400 - Date cannot be in the past"
+          },
+          "response": []
+        },
+        {
+          "name": "Cart - Double Booking Same Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 1,\n  \"date\": \"2026-03-15\",\n  \"time\": \"10:00:00\",\n  \"duration\": 60\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders/cart/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "cart",
+                ""
+              ]
+            },
+            "description": "Expected: 400 - Slot already booked (run after Add Item test)"
+          },
+          "response": []
+        },
+        {
+          "name": "Access Profile Without Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "profile",
+                ""
+              ]
+            },
+            "description": "Expected: 401 - Authentication credentials were not provided"
+          },
+          "response": []
+        },
+        {
+          "name": "Contact - Message Too Short",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test\",\n  \"email\": \"test@example.com\",\n  \"subject\": \"general\",\n  \"message\": \"Hi\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/contact/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "contact",
+                ""
+              ]
+            },
+            "description": "Expected: 400 - Message must be at least 10 characters"
+          },
+          "response": []
+        },
+        {
+          "name": "Appointment - Past Date",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 1,\n  \"date\": \"2020-06-15\",\n  \"time\": \"10:00:00\",\n  \"duration\": 60\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/consultations/appointments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "appointments",
+                ""
+              ]
+            },
+            "description": "Expected: 400 - Appointment date cannot be in the past"
+          },
+          "response": []
+        },
+        {
+          "name": "Appointment - Invalid Duration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 1,\n  \"date\": \"2026-04-20\",\n  \"time\": \"10:00:00\",\n  \"duration\": 45\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/consultations/appointments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "appointments",
+                ""
+              ]
+            },
+            "description": "Expected: 400 - Duration must be one of: [15, 30, 60, 120]"
+          },
+          "response": []
+        },
+        {
+          "name": "Appointment - Double Booking Same Slot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 1,\n  \"date\": \"2026-04-10\",\n  \"time\": \"09:00:00\",\n  \"duration\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/consultations/appointments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "appointments",
+                ""
+              ]
+            },
+            "description": "Expected: 400 - This time slot is already booked.\nRun AFTER request 7 (Create Appointment) — same category + date + time."
+          },
+          "response": []
+        },
+        {
+          "name": "Appointment - Access Another User's Appointment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/consultations/appointments/9999/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "appointments",
+                "9999",
+                ""
+              ]
+            },
+            "description": "Expected: 404 - Not found (either doesn't exist or belongs to another user)"
+          },
+          "response": []
+        },
+        {
+          "name": "Appointment - Delete Without Token",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/consultations/appointments/{{appointment_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "consultations",
+                "appointments",
+                "{{appointment_id}}",
+                ""
+              ]
+            },
+            "description": "Expected: 401 - Authentication credentials were not provided"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "appointment_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
