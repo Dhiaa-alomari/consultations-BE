@@ -81,8 +81,7 @@ class Appointment(models.Model):
         Always computed from the DB-stored price_per_15min, never from
         user-supplied data.
         """
-        return (Decimal(self.category.price_per_15min)
-                 / Decimal(15)) * Decimal(self.duration)
+        return (Decimal(self.category.price_per_15min) / Decimal(15)) * Decimal(self.duration)
 
     def save(self, *args, **kwargs):
         # Recompute on every save — prevents any tampering

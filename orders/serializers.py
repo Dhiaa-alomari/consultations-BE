@@ -1,18 +1,18 @@
 from rest_framework import serializers
-from django.utils   import timezone
-from .models        import Cart, CartItem, Order, OrderItem
+from django.utils import timezone
+from .models import Cart, CartItem, Order, OrderItem
 from consultations.models import Appointment
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    category_name   = serializers.CharField(source='category.category',        read_only=True)
+    category_name = serializers.CharField(source='category.category', read_only=True)
     price_per_15min = serializers.DecimalField(
         source='category.price_per_15min', max_digits=10, decimal_places=2, read_only=True
     )
-    computed_price  = serializers.SerializerMethodField()
+    computed_price = serializers.SerializerMethodField()
 
     class Meta:
-        model  = CartItem
+        model = CartItem
         fields = (
             'id', 'category', 'category_name', 'price_per_15min',
             'date', 'time', 'duration', 'computed_price', 'added_at',
@@ -28,7 +28,7 @@ class CartSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
 
     class Meta:
-        model  = Cart
+        model = Cart
         fields = ('id', 'items', 'total', 'updated_at')
 
     def get_total(self, obj):
@@ -39,7 +39,7 @@ class AddToCartSerializer(serializers.ModelSerializer):
     """Validates item to add to cart."""
 
     class Meta:
-        model  = CartItem
+        model = CartItem
         fields = ('category', 'date', 'time', 'duration')
 
     def validate_date(self, value):
@@ -70,7 +70,7 @@ class UpdateCartItemSerializer(serializers.ModelSerializer):
     """Allows changing duration or category (type) of a cart item."""
 
     class Meta:
-        model  = CartItem
+        model = CartItem
         fields = ('duration', 'category', 'date', 'time')
 
     def validate_duration(self, value):
@@ -81,8 +81,8 @@ class UpdateCartItemSerializer(serializers.ModelSerializer):
     def validate(self, data):
         instance = self.instance
         category = data.get('category', instance.category)
-        date     = data.get('date',     instance.date)
-        time     = data.get('time',     instance.time)
+        date = data.get('date', instance.date)
+        time = data.get('time', instance.time)
 
         if Appointment.objects.filter(
             category=category, date=date, time=time, is_paid=True,
@@ -99,7 +99,7 @@ class UpdateCartItemSerializer(serializers.ModelSerializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
-        model  = OrderItem
+        model = OrderItem
         fields = (
             'id', 'category_name', 'date', 'time',
             'duration', 'unit_price', 'total_price',
@@ -110,7 +110,7 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
 
     class Meta:
-        model  = Order
+        model = Order
         fields = (
             'id', 'total_amount', 'status',
             'stripe_payment_intent_id', 'created_at', 'items',

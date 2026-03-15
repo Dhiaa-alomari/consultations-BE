@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import User, Profile
 
 
-# ─── Helpers ──────────────────────────────────────────────────────────────────
+# ─── Helpers ─────────────────────────────────────────────────────────────────
 
 def _run_django_password_validators(password):
     """Run the built-in Django password validators."""
@@ -15,39 +15,40 @@ def _run_django_password_validators(password):
         raise serializers.ValidationError({'password': list(e.messages)})
 
 
-# ─── Register ─────────────────────────────────────────────────────────────────
+# ─── Register ────────────────────────────────────────────────────────────────
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password         = serializers.CharField(write_only=True, min_length=8)
+    password = serializers.CharField(write_only=True, min_length=8)
     password_confirm = serializers.CharField(write_only=True)
 
     class Meta:
-        model  = User
+        model = User
         fields = ('username', 'email', 'password', 'password_confirm')
 
     def validate_email(self, value):
         if User.objects.filter(email__iexact=value).exists():
-            raise serializers.ValidationError('This email is already registered.')
+            raise serializers.ValidationError('email is already registered.')
         return value.lower()
 
     def validate_username(self, value):
         if User.objects.filter(username__iexact=value).exists():
-            raise serializers.ValidationError('This username is already taken.')
+            raise serializers.ValidationError('username is already taken.')
         return value
 
     def validate(self, data):
         if data['password'] != data['password_confirm']:
-            raise serializers.ValidationError({'password_confirm': 'Passwords do not match.'})
+            raise serializers.ValidationError({
+                'password_confirm': 'Passwords do not match.'})
 
         _run_django_password_validators(data['password'])
 
         # Business rule: no two users may share the same raw password.
-        # We iterate only active users — acceptable for small-to-medium user bases.
+        # We iterate only active users — acceptable for small-to-medium.
         raw = data['password']
         for u in User.objects.all():
             if check_password(raw, u.password):
                 raise serializers.ValidationError(
-                    {'password': 'This password is already used by another account. '
+                    {'password': 'password is already used by another account.'
                                  'Please choose a unique password.'}
                 )
         return data
@@ -59,13 +60,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-# ─── Profile ──────────────────────────────────────────────────────────────────
+# ─── Profile ─────────────────────────────────────────────────────────────────
 
 class ProfileSerializer(serializers.ModelSerializer):
     avatar_url = serializers.SerializerMethodField()
 
     class Meta:
-        model  = Profile
+        model = Profile
         fields = ('avatar', 'avatar_url', 'phone', 'bio')
         extra_kwargs = {'avatar': {'write_only': True, 'required': False}}
 
@@ -79,7 +80,7 @@ class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
 
     class Meta:
-        model  = User
+        model = User
         fields = ('id', 'username', 'email', 'first_name', 'last_name',
                   'is_staff', 'date_joined', 'profile')
         read_only_fields = ('id', 'is_staff', 'date_joined')
@@ -90,10 +91,10 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileUpdateSerializer(serializers.Serializer):
     """Handles updating both User fields and Profile fields in one request."""
     first_name = serializers.CharField(required=False, allow_blank=True)
-    last_name  = serializers.CharField(required=False, allow_blank=True)
-    phone      = serializers.CharField(required=False, allow_blank=True)
-    bio        = serializers.CharField(required=False, allow_blank=True)
-    avatar     = serializers.ImageField(required=False)
+    last_name = serializers.CharField(required=False, allow_blank=True)
+    phone = serializers.CharField(required=False, allow_blank=True)
+    bio = serializers.CharField(required=False, allow_blank=True)
+    avatar = serializers.ImageField(required=False)
 
     def update(self, instance, validated_data):
         # Update User fields
@@ -113,25 +114,28 @@ class ProfileUpdateSerializer(serializers.Serializer):
         return instance
 
 
-# ─── Change Password ──────────────────────────────────────────────────────────
+# ─── Change Password ─────────────────────────────────────────────────────────
 
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password     = serializers.CharField(write_only=True)
-    new_password     = serializers.CharField(write_only=True, min_length=8)
+    old_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True, min_length=8)
     confirm_password = serializers.CharField(write_only=True)
 
     def validate(self, data):
         user = self.context['request'].user
 
         if not user.check_password(data['old_password']):
-            raise serializers.ValidationError({'old_password': 'Current password is incorrect.'})
+            raise serializers.ValidationError({
+                'old_password': 'Current password is incorrect.'})
 
         if data['new_password'] != data['confirm_password']:
-            raise serializers.ValidationError({'confirm_password': 'New passwords do not match.'})
+            raise serializers.ValidationError({
+                'confirm_password': 'New passwords do not match.'})
 
         if data['old_password'] == data['new_password']:
             raise serializers.ValidationError(
-                {'new_password': 'New password must differ from current password.'}
+                {'new_password':
+                    'New password must differ from current password.'}
             )
 
         _run_django_password_validators(data['new_password'])
@@ -141,7 +145,8 @@ class ChangePasswordSerializer(serializers.Serializer):
         for u in User.objects.exclude(pk=user.pk):
             if check_password(raw, u.password):
                 raise serializers.ValidationError(
-                    {'new_password': 'This password is already in use by another account.'}
+                    {'new_password':
+                        'This password is already in use by another account.'}
                 )
 
         return data

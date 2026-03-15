@@ -1,12 +1,14 @@
-from rest_framework                           import generics, status
-from rest_framework.views                     import APIView
-from rest_framework.response                  import Response
-from rest_framework.permissions               import IsAuthenticated, AllowAny
-from rest_framework_simplejwt.tokens          import RefreshToken
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from rest_framework import generics, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import (
+    OutstandingToken, BlacklistedToken
+)
 
-from .models       import User
-from .serializers  import (
+from .models import User
+from .serializers import (
     RegisterSerializer,
     UserSerializer,
     ProfileUpdateSerializer,
@@ -28,17 +30,20 @@ class RegisterView(generics.CreateAPIView):
 
         # Issue tokens immediately after registration
         refresh = RefreshToken.for_user(user)
-        return Response({
-            'message': 'Account created successfully.',
-            'user': UserSerializer(user).data,
-            'tokens': {
-                'refresh': str(refresh),
-                'access':  str(refresh.access_token),
-            }
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                'message': 'Account created successfully.',
+                'user': UserSerializer(user).data,
+                'tokens': {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                }
+            },
+            status=status.HTTP_201_CREATED
+        )
 
 
-# ─── Login ────────────────────────────────────────────────────────────────────
+# ─── Login ───────────────────────────────────────────────────────────────────
 
 class LoginView(APIView):
     """POST /api/auth/login/"""
@@ -60,7 +65,8 @@ class LoginView(APIView):
         if '@' in username:
             try:
                 u = User.objects.get(email__iexact=username)
-                user = authenticate(request, username=u.username, password=password)
+                user = authenticate(request, username=u.username,
+                                    password=password)
             except User.DoesNotExist:
                 pass
         else:
@@ -73,16 +79,18 @@ class LoginView(APIView):
             )
 
         refresh = RefreshToken.for_user(user)
-        return Response({
-            'user': UserSerializer(user).data,
-            'tokens': {
-                'refresh': str(refresh),
-                'access':  str(refresh.access_token),
+        return Response(
+            {
+                'user': UserSerializer(user).data,
+                'tokens': {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                }
             }
-        })
+        )
 
 
-# ─── Logout ───────────────────────────────────────────────────────────────────
+# ─── Logout ──────────────────────────────────────────────────────────────────
 
 class LogoutView(APIView):
     """POST /api/auth/logout/  — blacklists the refresh token."""
@@ -106,7 +114,7 @@ class LogoutView(APIView):
         return Response({'message': 'Logged out successfully.'})
 
 
-# ─── Profile ──────────────────────────────────────────────────────────────────
+# ─── Profile ─────────────────────────────────────────────────────────────────
 
 class ProfileView(APIView):
     """GET/PUT/PATCH /api/auth/profile/"""
@@ -134,7 +142,8 @@ class ChangePasswordView(APIView):
 
     def post(self, request):
         serializer = ChangePasswordSerializer(
-            data=request.data, context={'request': request}
+            data=request.data,
+            context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -151,7 +160,7 @@ class DeleteAccountView(APIView):
         password = request.data.get('password')
         if not password:
             return Response(
-                {'error': 'Password confirmation is required to delete your account.'},
+                {'error': 'Password confirmation is required.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         if not request.user.check_password(password):

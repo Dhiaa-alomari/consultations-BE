@@ -1,34 +1,34 @@
 import stripe
 from decimal import Decimal
 
-from django.conf             import settings
+from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators      import method_decorator
+from django.utils.decorators import method_decorator
 
-from rest_framework              import status, generics
-from rest_framework.views        import APIView
-from rest_framework.response     import Response
-from rest_framework.permissions  import IsAuthenticated
+from rest_framework import status, generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
-from .models       import Cart, CartItem, Order, OrderItem
-from .serializers  import (
+from .models import Cart, CartItem, Order, OrderItem
+from .serializers import (
     CartSerializer,
     AddToCartSerializer,
     UpdateCartItemSerializer,
     OrderSerializer,
 )
-from consultations.models      import Appointment, ConsultationCategory
+from consultations.models import Appointment, ConsultationCategory
 from consultations.serializers import CreateAppointmentSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-# ─── Cart Views ───────────────────────────────────────────────────────────────
+# ─── Cart Views ───────────────────────────────────────────────
 
 class CartView(APIView):
     """
-    GET  /api/orders/cart/     — view current cart
-    POST /api/orders/cart/     — add item to cart
+    GET /api/orders/cart/ — view current cart
+    POST /api/orders/cart/  — add item to cart
     """
     permission_classes = [IsAuthenticated]
 
@@ -55,8 +55,8 @@ class CartView(APIView):
 
 class CartItemView(APIView):
     """
-    PATCH  /api/orders/cart/items/<pk>/   — update duration or category
-    DELETE /api/orders/cart/items/<pk>/   — remove item
+    PATCH  /api/orders/cart/items/<pk>/ — update duration or category
+    DELETE /api/orders/cart/items/<pk>/ — remove item
     """
     permission_classes = [IsAuthenticated]
 
@@ -104,7 +104,7 @@ class ClearCartView(APIView):
             return Response({'message': 'Cart is already empty.'})
 
 
-# ─── Stripe Checkout ──────────────────────────────────────────────────────────
+# ─── Stripe Checkout ─────────────────────────────────────────────────────
 
 class CreateCheckoutSessionView(APIView):
     """
@@ -171,10 +171,10 @@ class CreateCheckoutSessionView(APIView):
         order.save()
 
         return Response({
-            'client_secret':      intent.client_secret,
-            'order_id':           order.pk,
-            'total_amount':       str(total),
-            'stripe_public_key':  settings.STRIPE_PUBLISHABLE_KEY,
+            'client_secret': intent.client_secret,
+            'order_id': order.pk,
+            'total_amount': str(total),
+            'stripe_public_key': settings.STRIPE_PUBLISHABLE_KEY,
         })
 
 
@@ -193,7 +193,7 @@ class StripeWebhookView(APIView):
     authentication_classes = []
 
     def post(self, request):
-        payload    = request.body
+        payload = request.body
         sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
 
         try:
@@ -204,7 +204,7 @@ class StripeWebhookView(APIView):
             return Response({'error': 'Invalid webhook signature.'}, status=400)
 
         if event['type'] == 'payment_intent.succeeded':
-            intent   = event['data']['object']
+            intent = event['data']['object']
             order_id = intent.get('metadata', {}).get('order_id')
 
             try:
@@ -224,7 +224,7 @@ class StripeWebhookView(APIView):
                     date=oi.date,
                     time=oi.time,
                     defaults={
-                        'user':     order.user,
+                        'user': order.user,
                         'duration': oi.duration,
                         'is_paid':  True,
                     }
@@ -244,7 +244,7 @@ class StripeWebhookView(APIView):
                 pass
 
         elif event['type'] == 'payment_intent.payment_failed':
-            intent   = event['data']['object']
+            intent = event['data']['object']
             order_id = intent.get('metadata', {}).get('order_id')
             Order.objects.filter(pk=order_id, status='pending').update(status='failed')
 
@@ -255,7 +255,7 @@ class StripeWebhookView(APIView):
 
 class OrderListView(generics.ListAPIView):
     """GET /api/orders/  — list current user's orders (newest first)."""
-    serializer_class   = OrderSerializer
+    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -266,7 +266,7 @@ class OrderListView(generics.ListAPIView):
 
 class OrderDetailView(generics.RetrieveAPIView):
     """GET /api/orders/<pk>/  — detail of a single order owned by this user."""
-    serializer_class   = OrderSerializer
+    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
