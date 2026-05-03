@@ -222,6 +222,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
+# Static files
+
 STATIC_URL = '/static/'
 STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
@@ -233,5 +235,8 @@ else:
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+#this line connects admin page  with whitenoise middleware.
+WHITENOISE_AUTOREFRESH = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
