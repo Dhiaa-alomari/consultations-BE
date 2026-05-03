@@ -68,7 +68,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ←   for admin page style
+# for admin page style
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -162,7 +162,7 @@ SIMPLE_JWT = {
 # ─── CORS ────────────────────────────────────────────────────────────────────
 CORS_ALLOWED_ORIGINS = os.getenv(
     'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://127.0.0.1:5500,http://127.0.0.1:5501,https://dhiaa-alomari.github.io'
+    'http://localhost:3000,http://127.0.0.1:5500,http://127.0.0.1:5501,https://dhiaa-alomari.github.io,https://cryptic-inlet-23568-d61e1fafbf72.herokuapp.com'
 ).split(',')
 
 # In development only:
