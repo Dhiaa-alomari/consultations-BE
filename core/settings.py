@@ -76,7 +76,8 @@ STATICFILES_FINDERS = [
 ]
 
 ROOT_URLCONF = 'core.urls'
-WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ('css',) #avoid compressing CSS files (can cause issues with Heroku's static file handling)
+# WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ('css',) #avoid compressing CSS files (can cause issues with Heroku's static file handling)
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = []
 
 TEMPLATES = [
     {
@@ -222,7 +223,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 STATIC_DIRS_PATH = os.path.join(BASE_DIR, 'static')
 if os.path.exists(STATIC_DIRS_PATH):
